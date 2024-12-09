@@ -49,17 +49,44 @@ function ProductImageUpload({
     setImageLoadingState(true);
     const data = new FormData();
     data.append("my_file", imageFile);
-    const response = await axios.post(
-      "http://localhost:5000/api/admin/products/upload-image",
-      data
-    );
-    console.log(response, "response");
-
-    if (response?.data?.success) {
-      setUploadedImageUrl(response.data.result.url);
+    
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/admin/products/upload-image",
+        data
+      );
+      console.log(response, "response");
+  
+      if (response?.data?.success) {
+        setUploadedImageUrl(response.data.result.url);
+      }
+    } catch (error) {
+      console.error("Error uploading image:", error);
+    } finally {
       setImageLoadingState(false);
     }
   }
+  
+  //Trong phần return
+  {uploadedImageUrl && (
+    <img src={uploadedImageUrl} alt="Uploaded" className="mt-2" />
+  )}
+
+  // async function uploadImageToCloudinary() {
+  //   setImageLoadingState(true);
+  //   const data = new FormData();
+  //   data.append("my_file", imageFile);
+  //   const response = await axios.post(
+  //     "http://localhost:5000/api/admin/products/upload-image",
+  //     data
+  //   );
+  //   console.log(response, "response");
+
+  //   if (response?.data?.success) {
+  //     setUploadedImageUrl(response.data.result.url);
+  //     setImageLoadingState(false);
+  //   }
+  // }
 
   useEffect(() => {
     if (imageFile !== null) uploadImageToCloudinary();
@@ -73,9 +100,8 @@ function ProductImageUpload({
       <div
         onDragOver={handleDragOver}
         onDrop={handleDrop}
-        className={`${
-          isEditMode ? "opacity-60" : ""
-        } border-2 border-dashed rounded-lg p-4`}
+        className={`${isEditMode ? "opacity-60" : ""
+          } border-2 border-dashed rounded-lg p-4`}
       >
         <Input
           id="image-upload"
@@ -88,9 +114,8 @@ function ProductImageUpload({
         {!imageFile ? (
           <Label
             htmlFor="image-upload"
-            className={`${
-              isEditMode ? "cursor-not-allowed" : ""
-            } flex flex-col items-center justify-center h-32 cursor-pointer`}
+            className={`${isEditMode ? "cursor-not-allowed" : ""
+              } flex flex-col items-center justify-center h-32 cursor-pointer`}
           >
             <UploadCloudIcon className="w-10 h-10 text-muted-foreground mb-2" />
             <span>Drag & drop or click to upload image</span>
